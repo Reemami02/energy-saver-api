@@ -5,7 +5,7 @@
   "main": "publisher.js",
   "type": "module",
   "scripts": {
-    "start": "node publisher.js"
+    "dev": "node api/server.js"
   },
   "keywords": [],
   "author": "",
