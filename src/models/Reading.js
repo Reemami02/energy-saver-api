@@ -14,6 +14,7 @@ humidity: { type: Number, default: null },
 aiPrediction: {
     recommendation: String,
     state: String,
+    status: String,
     device_Type: String,
   },
   
