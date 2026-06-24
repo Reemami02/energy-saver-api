@@ -10,7 +10,12 @@ const readingSchema = new mongoose.Schema({
   current: Number,
   power: Number,
   temperature: { type: Number, default: null },
-humidity: { type: Number, default: null },
+humidity: { type: Number, default: null }, 
+aiPrediction: {
+    recommendation: String,
+    state: String,
+    device_Type: String,
+  },
   
 
   createdAt: {
