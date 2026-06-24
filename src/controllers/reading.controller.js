@@ -37,8 +37,17 @@ exports.addReading = async (req, res) => {
       current,
       power,
       temperature,
-      humidity,
+      humidity
     });
+    const predictResult =
+    await aiServer.sendToPredictAI(device, reading).catch((err) => { console.error("Predict AI Error:", err.message); return null; });
+    
+    if (predictResult)
+       { reading.aiPrediction
+         = { recommendation: predictResult.recommendation
+          , state: predictResult.state
+          , device_Type: predictResult.device_Type, };
+           await reading.save(); }
 
     // ==============================
     // 2. UPDATE DEVICE
@@ -46,16 +55,6 @@ exports.addReading = async (req, res) => {
     await Device.findByIdAndUpdate(device._id, {
       latestReading: reading._id,
     });
-
-    // ==============================
-    // 3. CALL PREDICT AI ONLY
-    // ==============================
-    const predictResult = await aiServer
-      .sendToPredictAI(device, reading)
-      .catch((err) => {
-        console.error("Predict AI Error:", err.message);
-        return null;
-      });
 
     // ==============================
     // 4. RESPONSE
