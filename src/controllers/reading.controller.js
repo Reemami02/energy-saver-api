@@ -46,6 +46,7 @@ exports.addReading = async (req, res) => {
        { reading.aiPrediction
          = { recommendation: predictResult.recommendation
           , state: predictResult.state
+          , status: predictResult.status
           , device_Type: predictResult.device_Type, };
            await reading.save(); }
 
