@@ -8,13 +8,14 @@ const aiServer = require("../services/aiServer");
 // ==============================
 exports.addReading = async (req, res) => {
   try {
-    const {
-      voltage,
-      current,
-      power,
-      temperature,
-      humidity,
-    } = req.body;
+   const {
+    voltage,
+    current,
+    power,
+    temperature,
+    humidity,
+    state
+        } = req.body;
 
     if (
       voltage === undefined ||
@@ -28,6 +29,16 @@ exports.addReading = async (req, res) => {
 
     const device = req.device;
 
+    const deviceWithUser = await Device
+    .findById(device._id)
+    .populate("userId");
+
+if (!deviceWithUser) {
+    return res.status(404).json({
+        message: "Device not found"
+    });
+}
+
     // ==============================
     // 1. SAVE READING
     // ==============================
@@ -39,9 +50,21 @@ exports.addReading = async (req, res) => {
       temperature,
       humidity
     });
-    const predictResult =
-    await aiServer.sendToPredictAI(device, reading).catch((err) => { console.error("Predict AI Error:", err.message); return null; });
+    deviceWithUser.state = state;
+    deviceWithUser.latestReading = reading._id;
+
+    await deviceWithUser.save();
     
+    
+    const token = deviceWithUser.userId.token;
+   const predictResult = await aiServer.sendToPredictAI(
+   deviceWithUser,
+   reading,
+   token
+  ).catch((err) => {
+  console.error("Predict AI Error:", err.message);
+  return null;
+  });  
     if (predictResult)
        { reading.aiPrediction
          = { recommendation: predictResult.recommendation
@@ -50,12 +73,7 @@ exports.addReading = async (req, res) => {
           , device_Type: predictResult.device_Type, };
            await reading.save(); }
 
-    // ==============================
-    // 2. UPDATE DEVICE
-    // ==============================
-    await Device.findByIdAndUpdate(device._id, {
-      latestReading: reading._id,
-    });
+
 
     // ==============================
     // 4. RESPONSE
