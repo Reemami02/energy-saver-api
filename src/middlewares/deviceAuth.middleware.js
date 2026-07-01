@@ -14,9 +14,6 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ message: "Invalid API Key" });
     }
 
-    if (device.state === "off") {
-      return res.status(403).json({ message: "Device is OFF" });
-    }
 
     req.device = device;
     next();
