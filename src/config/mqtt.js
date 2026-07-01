@@ -2,6 +2,7 @@ const mqtt = require("mqtt");
 const Reading = require("../models/Reading");
 const Device = require("../models/Device");
 
+
 // الاتصال بالـ broker
 const client = mqtt.connect("mqtts://broker.hivemq.com:8883", {
   username: "Energy-Saver",
@@ -26,6 +27,9 @@ client.on("message", async (topic, message) => {
     console.log("📥 Data received:", data);
 
     const deviceId = data.deviceId;
+
+    const token = device.user.token;
+    
     await Reading.create({
       deviceId,
       voltage: data.voltage,
