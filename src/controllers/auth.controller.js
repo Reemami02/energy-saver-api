@@ -38,6 +38,9 @@ exports.register = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
+    user.token = token;
+    await user.save();
+   
 
     res.status(201).json({
       message: "User created successfully",
@@ -73,6 +76,13 @@ exports.login = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
+  user.token = token;
+  await user.save();
+  
+ const checkUser = await User.findById(user._id);
+
+console.log("Generated Token:", token);
+console.log("Saved Token:", checkUser.token);
 
   res.json({ token ,user: {
       id: user._id,
