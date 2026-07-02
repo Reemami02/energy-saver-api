@@ -22,7 +22,8 @@ const deviceSchema = new mongoose.Schema({
   state: {
     type: String,
     enum: ["on", "off"],
-    default: "off"
+    default: "off" ,
+    required: true
   },
   latestReading: {
   type: mongoose.Schema.Types.ObjectId,
