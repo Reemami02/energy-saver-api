@@ -9,7 +9,7 @@ function getCurrentTime() {
   const now = new Date();
 
   const hours = String((now.getHours()+3) %24).padStart(2, "0");
-    const minutes = String((now.getMinutes()-1+60)%60).padStart(2, "0");
+    const minutes = String((now.getMinutes()-2+60)%60).padStart(2, "0");
 
 
   return `${hours}:${minutes}`;
